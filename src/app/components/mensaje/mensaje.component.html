@@ -1,0 +1,111 @@
+<div class="row mt-5">
+    <div class="col-8 offset-2">
+        <form class="card" #mensajeForm="ngForm">
+            <div class="card-header"> Envio de Mensajes </div>
+            <div class="card-body">
+                <div class="row form-group">
+                    <label class="col-sm-12 col-md-4">Para</label>
+                    <input class="form-control col-sm-12 col-md-8" 
+                    type="number" name="para" [(ngModel)] = "mensaje.para"
+                    required #para="ngModel" />
+                    <div *ngIf="para.invalid && (para.touched || para.dirty)" class="alert alert-danger">
+                        <div *ngIf="para.errors.required"> Para es requerido </div>
+                    </div>
+    
+
+                </div>
+            <div class="row form-group">   
+                <label class="col-sm-12 col-md-4" >Desde</label>
+                <input class="form-control col-sm-12 col-md-8"
+                type="number" name="desde" [(ngModel)] = "mensaje.desde"
+                required #desde="ngModel"/>
+                <div *ngIf="desde.invalid && (desde.touched || desde.dirty)" class="alert alert-danger">
+                    <div *ngIf="desde.errors.required"> Desde es requerido </div>
+                </div>                
+            </div>
+        
+            <label>Longitud de texto escrito: {{tamTexto}}</label>
+            <div class="row form-group">
+                <textarea class="form-control" minlength={{tamMinTexto}} [maxlength]="tamMaxTexto" rows="5"
+                name="texto" [(ngModel)] = "mensaje.texto" (ngModelChange)="cambiarTamTexto()"
+                required #texto = "ngModel"
+                sin-caracter-especial sin-primera-letra-mayuscula> 
+
+                </textarea>
+                <div *ngIf="texto.invalid && (texto.touched || texto.dirty)" class="alert alert-danger">
+                    <div *ngIf="texto.errors.required"> Texto es requerido </div>
+                    <div *ngIf="texto.errors.minlength"> Se requiere al menos {{texto.errors.minlength.requiredLength}} caracteres </div>
+                    <div *ngIf="texto.errors.sinCaracterEspecial"> No se permiten caracteres especiales </div>
+                    <div *ngIf="texto.errors.sinPrimeraLetraMayuscula"> La primera letra tiene que estar en mayuscula </div>
+                </div>
+            </div>
+
+
+            <div class="row form-group">   
+                <label class="col-sm-12 col-md-4" >Fecha Envio</label>
+                <input id="idfecha" class="form-control form-control-sm col-md-8"
+                type="date" name="fecha"
+                [ngModel]="mensaje.fecha | date:'yyyy-MM-dd'"
+                (ngModelChange)="mensaje.fecha = $event"
+                [value]="mensaje.fecha | date:'yyyy-MM-dd'"
+                required #fecha="ngModel"/>
+                <div *ngIf="fecha.invalid && (fecha.touched || fecha.dirty)" class="alert alert-danger">
+                    <div *ngIf="fecha.errors.required"> Texto es requerido </div>
+                </div>
+
+            </div>
+
+            <div class="row form-group">
+                <div class="text-center mt-3">
+                    <button type="button" class="btn btn-primary col-md-3"
+                        (click)="enviarMensaje(mensajeForm)"
+                        [disabled]="mensajeForm.invalid"
+                        *ngIf="accion == 'new'">Enviar</button>
+                    <button type="button" class="btn btn-primary col-md-3"
+                        *ngIf="accion == 'update'">Modificar</button> 
+                    <button type="button" class="btn btn-secondary col-md-3">Limpiar</button> 
+                </div>
+            </div>
+            </div>
+        </form>
+
+        <div class="bg-light border border-1">
+            <p>Valores del Form: {{mensajeForm.value | json }}</p>
+            <p>Estado del Form: {{mensajeForm.status | json}}</p>
+            <p>Estado del variable #texto: {{texto.errors | json }}</p>
+        </div>
+
+        <h3 class="text-center">LISTADO DE MENSAJES HISTORICOS</h3>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Desde</th>
+                        <th>Para</th>
+                        <th>Texto</th>
+                        <th>Fecha</th>
+                        <th></th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of mensajes">
+                        <td>{{item.id}}</td>
+                        <td>{{item.desde}}</td>
+                        <td>{{item.para}}</td>
+                        <td>{{item.texto}}</td> 
+                        <td>{{item.fecha | date: 'dd/MM/yyyy'}}</td> 
+                        <td>
+                        <button type="button" class="btn btn-secondary"
+                            (click)="borrarMensaje(item)">Borrar</button>
+                        <button type="button" class="btn btn-secondary"
+                            (click)="elegirMensaje(item)">Seleccionar</button> 
+                    </td> </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+    </div>
+</div>
+
